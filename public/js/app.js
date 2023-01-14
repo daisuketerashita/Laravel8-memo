@@ -5448,25 +5448,47 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _fullcalendar_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @fullcalendar/core */ "./node_modules/@fullcalendar/core/index.js");
-/* harmony import */ var _fullcalendar_interaction__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @fullcalendar/interaction */ "./node_modules/@fullcalendar/interaction/index.js");
-/* harmony import */ var _fullcalendar_daygrid__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fullcalendar/daygrid */ "./node_modules/@fullcalendar/daygrid/index.js");
+/* harmony import */ var _fullcalendar_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @fullcalendar/core */ "./node_modules/@fullcalendar/core/index.js");
+/* harmony import */ var _fullcalendar_interaction__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @fullcalendar/interaction */ "./node_modules/@fullcalendar/interaction/index.js");
+/* harmony import */ var _fullcalendar_daygrid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fullcalendar/daygrid */ "./node_modules/@fullcalendar/daygrid/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
 
 
 
 var calendarEl = document.getElementById("calendar");
-var calendar = new _fullcalendar_core__WEBPACK_IMPORTED_MODULE_0__.Calendar(calendarEl, {
-  plugins: [_fullcalendar_interaction__WEBPACK_IMPORTED_MODULE_1__["default"], _fullcalendar_daygrid__WEBPACK_IMPORTED_MODULE_2__["default"]],
+var calendar = new _fullcalendar_core__WEBPACK_IMPORTED_MODULE_1__.Calendar(calendarEl, {
+  plugins: [_fullcalendar_interaction__WEBPACK_IMPORTED_MODULE_2__["default"], _fullcalendar_daygrid__WEBPACK_IMPORTED_MODULE_3__["default"]],
   initialView: "dayGridMonth",
   headerToolbar: {
     left: "prev,next today",
     center: "title",
-    right: ""
+    right: "dayGridMonth,timeGridWeek,listWeek"
   },
-  // 日付をクリック、または範囲を選択したイベント
-  selectable: true,
-  select: function select(info) {
-    alert("selected " + info.startStr + " to " + info.endStr);
+  locale: "ja",
+  dateClick: function dateClick(e) {
+    console.log(e.dateStr);
+    axios__WEBPACK_IMPORTED_MODULE_0___default().get("/calendar/add/" + e.dateStr).then(function (res) {
+      location.href = "/calendar/add/" + e.dateStr;
+    })["catch"](function () {
+      alert("登録に失敗しました");
+    });
+  },
+  events: function events(info, successCallback, failureCallback) {
+    // Laravelのイベント取得処理の呼び出し
+    axios__WEBPACK_IMPORTED_MODULE_0___default().post("/schedule-get", {
+      start_date: info.start.valueOf(),
+      end_date: info.end.valueOf()
+    }).then(function (response) {
+      // 追加したイベントを削除
+      calendar.removeAllEvents();
+      // カレンダーに読み込み
+      successCallback(response.data);
+    })["catch"](function () {
+      // バリデーションエラーなど
+      alert("登録に失敗しました");
+    });
   }
 });
 calendar.render();
@@ -53117,6 +53139,18 @@ module.exports = JSON.parse('{"name":"axios","version":"0.21.4","description":"P
 /******/ 				}
 /******/ 			}
 /******/ 			return result;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
 /******/ 		};
 /******/ 	})();
 /******/ 	
